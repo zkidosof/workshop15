@@ -1,10 +1,11 @@
 package com.self.service.impl;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
 import java.util.HashMap;
 
+import com.self.exception.DuplicateIsbnException;
+import com.self.exception.MagazineNotFoundException;
+import com.self.exception.RecordNotFoundException;
 import com.self.service.BookManager;
 import com.self.vo.Book;
 import com.self.vo.Magazine;
@@ -25,59 +26,27 @@ public class BookManagerImpl implements BookManager{
 	}
 	
 	@Override
-	public void insertBook(Book book) {
+	public void insertBook(Book book) throws DuplicateIsbnException{
 		if(!bookMap.containsKey(book.getIsbn())) {
 			bookMap.put(book.getIsbn(), book);
 			System.out.println("<"+book.getTitle()+">가 등록되었습니다.");
-		}
-		System.out.println("이미 등록된 책입니다.");
-		
+		}else throw new DuplicateIsbnException("이미 등록된 책입니다.");
 	}
-		
-		
-		
-	
 
 	@Override 
-	public void deleteBook(int isbn) {
-		int find = -1;
-		if(bookList.isEmpty()) return;
-		for(int i=0; i<idx; i++) {
-			if(bookList.get(i).getIsbn() == isbn) {
-				
-				find = i;
-				break;
-			}
-		}
-		if(find !=  -1) {
-			bookList.remove(find);
-		}
+	public void deleteBook(int isbn) throws RecordNotFoundException {
+	 if(bookMap.containsKey(isbn)) {
+		 bookMap.remove(isbn);
+		 System.out.println("삭제 되었습니다.");
+	 }else throw new RecordNotFoundException("삭제 대상이 없습니다.");
 	}
 	
-	@Override
-	public void updateBook(Book book) {
-		 int idx = 0;
-		for ( Book b : bookList) {
-			if(bookList.isEmpty()) break;
-			if(b.getIsbn() == book.getIsbn()) {
-												//idx ++
-				b.setTitle(book.getTitle()); //books.set(idx, book); -> instanc of를 쓰면 안됨 두줄로 끝남
-				b.setAuthor(book.getAuthor());
-				b.setPrice(book.getPrice());
-				b.setPublisher(book.getPublisher());
-				
-				if(b instanceof Magazine) {
-//					Magazine magazine = (Magazine)b;
-//					Magazine bk = (Magazine) book;
-					((Magazine)b).setPublishDate(((Magazine) book).getPublishDate());
-				}
-				else if(b instanceof Novel ) {
-//					Novel novel = (Novel)b;
-//					Novel bk = (Novel) book;
-					((Novel)b).setGenre(((Novel) book).getGenre());
-				}
-			}
-		}
+	@Override 
+	public void updateBook(Book book) throws RecordNotFoundException {
+		if(bookMap.containsKey(book.getIsbn())) {
+			bookMap.put(book.getIsbn(), book);
+			System.out.println("책 정보가 수정되었습니다.");
+		}else throw new RecordNotFoundException("업데이트 대상을 찾지 못했습니다.");
 	}
 	
 	@Override
@@ -89,24 +58,23 @@ public class BookManagerImpl implements BookManager{
 	}
 
 	@Override
-	public HashMap<Integer, Book> getAllBook() {
-		return bookMap;
+	public ArrayList<Book> getAllBook() {
+		ArrayList<Book> temp = new ArrayList<>();
+		for(Book b: bookMap.values())
+			temp.add(b);
+		return temp;
 	}
 
 	@Override
 	public int getNumberOfBooks() {
 		return bookMap.size();
-
 	}
 
 	@Override
-	public ArrayList<Book> searchBookByTitle(String title) {//박성우 3
+	public ArrayList<Book> searchBookByTitle(String title) {
 		ArrayList<Book> result = new ArrayList<>();
-		if(bookList.isEmpty())  return result; // 전에는 size를 정하고 들어가니까 안에 있음
-		
-		for(Book b: bookList) {
-		
-			if(b.getTitle().equals(title) ){
+		for (Book b : bookMap.values()) {
+			if (b.getTitle().equals(title)) {
 				result.add(b);
 			}
 		}
@@ -114,11 +82,9 @@ public class BookManagerImpl implements BookManager{
 	}
 
 	@Override
-	public ArrayList<Book> searchBookByPrice(double min, double max) {//박성우 4
+	public ArrayList<Book> searchBookByPrice(double min, double max) {
 		ArrayList<Book> result = new ArrayList<>();
-		if(bookList.isEmpty()) return result;
-		for(Book b: bookList) {
-			
+		for(Book b: bookMap.values()) {
 			if(b.getPrice() >= min && b.getPrice()  <= max)
 				result.add(b);
 		}
@@ -192,13 +158,14 @@ public class BookManagerImpl implements BookManager{
 	}
 	
 	@Override
-	public HashMap<Integer, Book> magazineOfThisYearInfo(int year) {
-		HashMap<Integer, Book> temp = new HashMap<Integer, Book>();
-		int idx = 0;
+	public ArrayList<Book> magazineOfThisYearInfo(int year) throws MagazineNotFoundException{
+		ArrayList<Book> temp = new ArrayList<>();
 		for(Book b: bookMap.values()) {
 			if(b instanceof Magazine && ((Magazine) b).getPublishDate().getYear() == year)
-				temp.put(idx++, b);
+				temp.add(b);
 		}
+		if(temp.size() == 0)
+			throw new MagazineNotFoundException("잡지 목록이 없습니다.");
 		return temp;
 	}
 
