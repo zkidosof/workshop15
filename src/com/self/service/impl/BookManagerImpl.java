@@ -168,4 +168,6 @@ public class BookManagerImpl implements BookManager{
 			throw new MagazineNotFoundException("잡지 목록이 없습니다.");
 		return temp;
 	}
+
+	//
 }
