@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 
 import com.self.service.impl.BookManagerImpl;
 import com.self.util.Date;
@@ -69,7 +70,7 @@ public class BookManagerTest {
 			
 		System.out.println("====2번째 정렬====");
 		// magazineOfThisYearInfo() 반환받은 데이터를 잡지 월 기준으로 내림차순 정렬
-		ArrayList<Book> list2 = service.magazineOfThisYearInfo();
+		HashMap<Integer, Book> list2 = service.magazineOfThisYearInfo(2025);
 		Collections.sort(list2, new Comparator<Book>() {
 			@Override
 			public int compare(Book o1, Book o2) {

@@ -143,15 +143,14 @@ public class BookManagerImpl implements BookManager{
 	@Override
 	public double getSumPriceOfBooks() {
 		double sum = 0.0;
-		for(Book b: bookList) {
+		for(Book b: bookMap.values())
 			sum += b.getPrice();
-		}
 		return sum;
 	}
 
 	@Override
 	public double getAvgPriceOfBooks() {
-		return getSumPriceOfBooks()/idx;
+		return getSumPriceOfBooks()/bookMap.size();
 	}
 
 	@Override
@@ -159,7 +158,7 @@ public class BookManagerImpl implements BookManager{
 		Book temp = null;
 		int year = 0;
 		int month = 0;
-		for(Book b: bookList){
+		for(Book b: bookMap.values()){
 			if(b instanceof Magazine) {
 				if(((Magazine) b).getPublishDate().getYear() > year) {
 					temp = b;
@@ -181,52 +180,40 @@ public class BookManagerImpl implements BookManager{
 	public String getPopularGenre() {
 		// 소설의 경우 장르가 한정되어 있다고 가정한다.
 		// 여기서는 임시로 "한국소설"과 "해외소설", "기타소설"로 구분한다
-		ArrayList<String> list1 = new ArrayList<String>();
-		list1.add(0, "한국소설");
-		list1.add(1, "해외소설");
-		list1.add(2, "기타소설");
-		int n = list1.size();
-		ArrayList<Integer> list2 = new ArrayList<Integer>();
-		list2.add(0);
-		list2.add(0);
-		list2.add(0);
-		for(Book b:bookList) {
+		HashMap<String, Integer> genreMap = new HashMap<String, Integer>();
+		genreMap.put("한국소설", 0);
+		genreMap.put("해외소설", 0);
+		genreMap.put("기타소설", 0);
+		for(Book b: bookMap.values()) {
 			if(b instanceof Novel) {
 				if(((Novel) b).getGenre().equals("한국소설")) {
-					list2.set(0, list2.get(0)+1);
+					genreMap.replace("한국소설", genreMap.get("한국소설")+1);
 				} else if (((Novel) b).getGenre().equals("해외소설")) {
-					list2.set(1, list2.get(1)+1);
+					genreMap.replace("해외소설", genreMap.get("해외소설")+1);
 				} else if (((Novel) b).getGenre().equals("기타소설")) {
-					list2.set(2, list2.get(2)+1);
+					genreMap.replace("기타소설", genreMap.get("기타소설")+1);
 				}
 			}
 		}
 		int max = 0;
 		String genre = "";
-		for(int i=0; i<list1.size(); i++) {
-			if (list2.get(i) > max) {
-				max = list2.get(i);
-				genre = list1.get(i);
+		for(String g : genreMap.keySet()) {
+			if (genreMap.get(g) > max) {
+				max = genreMap.get(g);
+				genre = g;
 			}
 		}
 		return genre;
 	}
 	
 	@Override
-	public ArrayList<Book> magazineOfThisYearInfo() {
-		Calendar c = Calendar.getInstance();
-		int thisYear = c.get(Calendar.YEAR);
-		ArrayList<Book> temp = new ArrayList<Book>();
-		for(Book b:bookList) {
-			if(b instanceof Magazine && ((Magazine) b).getPublishDate().getYear() == thisYear)
-				temp.add(b);
+	public HashMap<Integer, Book> magazineOfThisYearInfo(int year) {
+		HashMap<Integer, Book> temp = new HashMap<Integer, Book>();
+		int idx = 0;
+		for(Book b: bookMap.values()) {
+			if(b instanceof Magazine && ((Magazine) b).getPublishDate().getYear() == year)
+				temp.put(idx++, b);
 		}
 		return temp;
 	}
-	@Override
-	public HashMap<Integer, Book> magazineOfThisYearInfo(int year) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	
 }
