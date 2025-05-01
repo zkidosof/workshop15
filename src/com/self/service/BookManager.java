@@ -1,22 +1,23 @@
 package com.self.service;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 
 import com.self.vo.Book;
 
+
 public interface BookManager {
-	
 	void insertBook(Book book);
 	void deleteBook(int isbn);
 	void updateBook(Book book);
 	Book getBook(int isbn);
-	ArrayList<Book> getAllBook();
+	HashMap<Integer, Book> getAllBook();
 	int getNumberOfBooks();
-	ArrayList<Book> searchBookByTitle(String title);
-	ArrayList<Book> searchBookByPrice(double min, double max);
+	HashMap<Integer, Book> searchBookByTitle(String title);
+	HashMap<Integer, Book> searchBookByPrice(double min, double max);
 	double getSumPriceOfBooks();
 	double getAvgPriceOfBooks();
 	Book getRecentBook();
 	String getPopularGenre();
-	ArrayList<Book> magazineOfThisYearInfo();
+	HashMap<Integer, Book> magazineOfThisYearInfo();
+	HashMap<Integer, Book> magazineOfThisYearInfo(int year);
 }

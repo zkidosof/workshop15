@@ -3,6 +3,7 @@ package com.self.service.impl;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.HashMap;
 
 import com.self.service.BookManager;
 import com.self.vo.Book;
@@ -12,18 +13,12 @@ import com.self.vo.Novel;
 public class BookManagerImpl implements BookManager{
 
 	// private Book[] books;
-	private ArrayList<Book> bookList;
+	private HashMap<Integer, Book> bookMap;
 
-	public static final int MAX_SIZE = 100;
-	private int idx;
-	private int numberOfBook; // 총 입고된 책의 수량 등으로 활용할 수 있음
-	
 	// 싱글톤
 	private static BookManagerImpl service = new BookManagerImpl();
 	private BookManagerImpl() {
-
-		// books = new Book[MAX_SIZE];
-		bookList = new ArrayList<Book>();
+		bookMap = new HashMap<Integer, Book>();
 	}
 	public static BookManagerImpl getInstance() {
 		return service;
@@ -227,6 +222,11 @@ public class BookManagerImpl implements BookManager{
 				temp.add(b);
 		}
 		return temp;
+	}
+	@Override
+	public HashMap<Integer, Book> magazineOfThisYearInfo(int year) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 }
