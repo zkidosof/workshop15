@@ -18,6 +18,5 @@ public interface BookManager {
 	double getAvgPriceOfBooks();
 	Book getRecentBook();
 	String getPopularGenre();
-	HashMap<Integer, Book> magazineOfThisYearInfo();
 	HashMap<Integer, Book> magazineOfThisYearInfo(int year);
 }
