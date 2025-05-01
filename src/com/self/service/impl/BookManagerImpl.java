@@ -26,20 +26,12 @@ public class BookManagerImpl implements BookManager{
 	
 	@Override
 	public void insertBook(Book book) {
-		boolean find = false;//못찾았다라는 뜻
-		for(Book b: bookList) {
-			if(b.getIsbn() == book.getIsbn()) {
-				find = true; //찾았다
-				System.out.println("이미 등록되어진 책 입니다.");
-				return;
-			}
-		}
-		if(find == false) {
-			bookList.add(book);
+		if(!bookMap.containsKey(book.getIsbn())) {
+			bookMap.put(book.getIsbn(), book);
 			System.out.println("<"+book.getTitle()+">가 등록되었습니다.");
-			idx++;
-			numberOfBook++;
 		}
+		System.out.println("이미 등록된 책입니다.");
+		
 	}
 		
 		
@@ -90,28 +82,21 @@ public class BookManagerImpl implements BookManager{
 	
 	@Override
 	public Book getBook(int isbn) {
-		Book find = null;
-		for(Book b : bookList) {
-			
-			if(b.getIsbn()==isbn) {
-				find = b;
-				break;
-			}
-		}
-		if(find == null)System.out.println("해당 책을 찾을 수 없습니다.");
-		return find;
+		if(!bookMap.containsKey(isbn)) {
+			System.out.println("해당 책을 찾을 수 없습니다.");
+		} 
+		return bookMap.get(isbn);
 	}
 
 	@Override
-	public ArrayList<Book> getAllBook() {
-		return bookList;
+	public HashMap<Integer, Book> getAllBook() {
+		return bookMap;
 	}
 
 	@Override
 	public int getNumberOfBooks() {
-		return idx;
-		// 삭제된 것과 상관 없이 입고된 책의 수 반환할 경우
-		// return numberOfBook;
+		return bookMap.size();
+
 	}
 
 	@Override
@@ -216,4 +201,6 @@ public class BookManagerImpl implements BookManager{
 		}
 		return temp;
 	}
+
+	
 }
